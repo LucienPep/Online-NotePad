@@ -2,7 +2,7 @@ const notes = require('express').Router()
 const fs = require('fs')
 const path = require('path');
 
-const {readAndAppend} = require('../helpers/fsUtils');
+const {readFromFile, readAndAppend} = require('../helpers/fsUtils');
 
 const uuid = require('uuid')
 
@@ -28,32 +28,27 @@ notes.post('', (req, res) => {
   }  
 });
 
-notes.delete('/:id', (req, res) => {
+notes.delete("/:id", async (req, res) => {
   console.info(`${req.method} Note`);
-  var db = require('../db/db.json')
-  const id = req.params.id
-  console.log(id)
-  console.log(db.length)
-  console.log(db)
+  let db = {};
+  const id = req.params.id;
 
-  for(i = 0; i < db.length; i++){
+  await readFromFile("./db/db.json").then((data) => {
+    db = JSON.parse(data);
+  });
 
-    if(db[i].id === id){
-      db.splice(i,1)
-      //console.log(db)
-      delete require.cache
-
-      fs.writeFile('./db/db.json', JSON.stringify(db), function (err) {
-        
-        if (err){
-          throw err
-        }
-      })
-      
-      break
+  for (i = 0; i < db.length; i++) {
+    if (db[i].id === id) {
+      db.splice(i, 1);
+      break;
     }
   }
 
-})
+  fs.writeFile("./db/db.json", JSON.stringify(db), function (err) {
+    if (err) {
+      throw err;
+    }
+  });
+});
  
 module.exports = notes

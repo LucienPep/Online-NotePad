@@ -52,7 +52,7 @@ const deleteNote = (id) => {
       'Content-Type': 'application/json',
     },
   });
-  //window.location.reload()
+  window.location.reload()
 }
 
 const renderActiveNote = () => {
