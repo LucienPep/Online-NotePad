@@ -27,5 +27,33 @@ notes.post('', (req, res) => {
     res.error('Please Enter both fields');
   }  
 });
+
+notes.delete('/:id', (req, res) => {
+  console.info(`${req.method} Note`);
+  var db = require('../db/db.json')
+  const id = req.params.id
+  console.log(id)
+  console.log(db.length)
+  console.log(db)
+
+  for(i = 0; i < db.length; i++){
+
+    if(db[i].id === id){
+      db.splice(i,1)
+      //console.log(db)
+      delete require.cache
+
+      fs.writeFile('./db/db.json', JSON.stringify(db), function (err) {
+        
+        if (err){
+          throw err
+        }
+      })
+      
+      break
+    }
+  }
+
+})
  
 module.exports = notes
